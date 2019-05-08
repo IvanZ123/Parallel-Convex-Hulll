@@ -1,7 +1,7 @@
 wrap: wrapping.cpp
 	g++ -g -o wrap wrapping.cpp ch_helper.cpp
-test: MST.cpp
-	g++ -g -o mst -fopenmp MST.cpp
+brute: brute_force.cpp
+	g++ -g -o  brute brute_force.cpp ch_helper.cpp
 stam: MST.cpp
 	icc -o mst -qopenmp MST.cpp
 clean:
