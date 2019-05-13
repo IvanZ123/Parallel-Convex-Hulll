@@ -1,34 +1,38 @@
-#include "ch_helper.h"
+#include "para_helper.h"
 #include <iostream>
 #include <vector>
 #include <math.h>
-#include <ctime>
 #include <unordered_set>
 #include <iterator>
+#include <time.h>
+#include <omp.h>
 using namespace std;
+
+ll n=1000;
+Point points[1000];
 
 struct MyHashFunction
 {
 	size_t operator()(const Point& p) const
 	{
-		return (hash<int>()(p.x))^(hash<int>()(p.y));
+		return (hash<ll>()(p.x))^(hash<ll>()(p.y));
 	}
 
 };
 
-void brute(unordered_set<Point,MyHashFunction> *hull, Point points[], int n)
+void brute(unordered_set<Point,MyHashFunction> *hull, Point points[], ll n)
 {
 	if(n < 3) return;
-	for(int i = 0; i < n; i++)
+	for(ll i = 0; i < n; i++)
 	{
-		for(int j = 0; j<n; j++)
+		for(ll j = 0; j<n; j++)
 		{
 			if(i == j) continue;
 			bool allsameside = true;
-			for(int k = 0; k < n; k++)
+			for(ll k = 0; k < n; k++)
 			{
 				if(k==i||k==j) continue;
-				if( orientation(points[i], points[j], points[k] ) == -1) allsameside = false;
+				if( orientation(points[i], points[j], points[k] ) == 2) allsameside = false;
 			}
 			if(allsameside)
 			{
@@ -39,20 +43,31 @@ void brute(unordered_set<Point,MyHashFunction> *hull, Point points[], int n)
 	}
 }
 
+
+
 int main() 
 { 
-    Point points[] = {{0, 3}, {2, 2}, {1, 1}, {2, 1}, {3, 0}, {0, 0}, {3, 3}};
-    // Point points[] = {{0, 0}, {0, 1}, {0,2}, {0, 3}, {0,5}, {0,4}, {1, 0}, {2, 0}, {3, 0}, {5, 0}, {4, 0}}; 
-    unordered_set<Point,MyHashFunction> hull;
+    unordered_set<Point,MyHashFunction> hull;;
 
-    int n = sizeof(points)/sizeof(points[0]); 
-    cout<<"n="<<n<<endl;
-    brute(&hull,points, n); 
+    clock_t startTime,endTime;
+    for(ll i=0;i<n;i++){
+      points[i].x=rand()%n;
+      points[i].y=rand()%n;
+    }
 
-    for(auto e:hull)
+    //Runtime for serial Wrapping
+	startTime = clock();
+    brute(&hull, points, n);
+	endTime = clock();
+	for(auto e:hull)
     {
     	cout << "(" << e.x<<", "<< e.y<<")" << endl; 
     }
- 
-    return 0; 
+	cout<<"serial size "<< hull.size()<<endl;
+	cout << "Totle Serial Time : " <<(double)(endTime - startTime) / CLOCKS_PER_SEC << "s" << endl;
+
+
+
+    return 0;
+
 } 
