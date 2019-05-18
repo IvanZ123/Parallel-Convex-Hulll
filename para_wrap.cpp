@@ -2,19 +2,17 @@
 #include <stdlib.h>
 #include <iostream>
 #include <omp.h>
-#include <sys/time.h>
 #include <bits/stdc++.h>
 #include <time.h>
 #include "para_helper.h"
 using namespace std;
 
 
-
+ 
 //https://github.com/IvanZ123/Parallel_Convex_Hull
 
 Point points[SIZE];
 ll n=SIZE;
-
 
 void wrapping_serial(Point points[], std::vector<Point> *hull, ll n)
 {
@@ -43,8 +41,8 @@ void wrapping_serial(Point points[], std::vector<Point> *hull, ll n)
 //Parallel Gift-wrapping Convexhull
 void wrapping(Point points[], std::vector<Point> *hull, ll n)
 {
-  ll min_y=points[0].y,min=0;
-  int chunk;
+  ll min=0;
+  // int chunk;
   // printf("enter chunk size\n");
   // cin>>chunk;
   #pragma omp parallel for
@@ -69,14 +67,14 @@ void wrapping(Point points[], std::vector<Point> *hull, ll n)
       }
       p=q;
   }while(p!=min);
-}
+} 
 int main()
 {
 	clock_t startTime,endTime;
 	double start_time, final_time;
     std::vector<Point> hull,hull_serial;
-
-    for(int i=0;i<n;i++){
+    cout<<"beign"<<endl;
+    for(ll i=0;i<n;i++){
       points[i].x=rand()%n;
       points[i].y=rand()%n;
     }
@@ -97,5 +95,20 @@ int main()
     wrapping_serial(points, &hull_serial, n);
 	endTime = clock();
 	cout << "Totle Serial Time : " <<(double)(endTime - startTime) / CLOCKS_PER_SEC << "s" << endl;
+	int size1 = hull.size();
+	int size2 = hull_serial.size();
+	if(size1==size2) cout<<"size equals "<<endl;
+	else{
+		cout <<"different size"<<endl;
+		return 0;
+	}
+
+	for(int i = 0; i < size1; i++)
+	{
+		if(hull[i]!= hull_serial[i]){
+			cout<<"content different"<<endl;
+			return 0;
+		}
+	}
     return 0;
 }
